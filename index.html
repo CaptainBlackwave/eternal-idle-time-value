@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resource Time Value Calculator</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <h1>Resource Time Value Calculator</h1>
+
+  <p>
+    Calculates intrinsic value based on total gathering,
+    refining, and crafting time.
+  </p>
+
+  <div class="section">
+    <div class="card">
+      <h2 style="margin-bottom: 20px;">Trade Calculator</h2>
+
+      <div
+        class="trade-grid"
+        style="display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;"
+      >
+
+        <!-- GIVE -->
+        <div>
+          <h3 style="margin-bottom:12px;">You Give</h3>
+
+          <label>Tier</label>
+          <select id="giveTier"></select>
+
+          <label>Resource</label>
+          <select id="giveType"></select>
+
+          <label>Amount</label>
+          <input
+            id="giveAmount"
+            type="number"
+            value="1"
+            min="1"
+          >
+        </div>
+
+        <!-- SWAP -->
+        <div style="display:flex;justify-content:center;align-items:center;">
+          <button
+            id="swapSides"
+            style="
+              padding:14px 18px;
+              background:#334155;
+              border:none;
+              color:white;
+              border-radius:12px;
+              font-size:18px;
+              font-weight:bold;
+            "
+          >
+            ⇄
+          </button>
+        </div>
+
+        <!-- WANT -->
+        <div>
+          <h3 style="margin-bottom:12px;">You Want</h3>
+
+          <label>Tier</label>
+          <select id="wantTier"></select>
+
+          <label>Resource</label>
+          <select id="wantType"></select>
+        </div>
+      </div>
+
+      <button
+        id="calculateTrade"
+        style="
+          margin-top:20px;
+          padding:14px 22px;
+          background:#10b981;
+          border:none;
+          color:white;
+          border-radius:12px;
+          font-size:16px;
+          font-weight:bold;
+        "
+      >
+        Calculate Equivalent Trade
+      </button>
+
+      <div id="tradeResult"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="professionGrid"></div>
+
+  <div class="section">
+    <div class="info-grid">
+      <div class="info-box">
+        <p><strong>Base Resources:</strong> Gathering time for one raw material.</p>
+
+        <p><strong>Refined Resources:</strong> Includes gathering 2 base materials plus refining time.</p>
+
+        <p><strong>Crafted Items:</strong> Includes all required materials plus crafting time.</p>
+
+        <p><strong>Trade Value:</strong> Higher total production time means higher intrinsic value.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+
+</body>
+</html>
