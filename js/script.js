@@ -166,7 +166,16 @@ function calculateValues(tier, profession) {
   // Kitchen
   if (profession.type === "kitchen") {
     const foodValue = (gatherTime * 2) + refineTime;
-    return { base: gatherTime, refined: null, crafted: foodValue };
+    return {
+      base: gatherTime,
+      refined: null,
+      crafted: foodValue,
+      breakdown: {
+        base: null,
+        refined: null,
+        crafted: `2\u00d7${formatTime(gatherTime)} ${profession.base} + ${formatTime(refineTime)} ${profession.crafted}`
+      }
+    };
   }
 
   // Refined
@@ -183,7 +192,16 @@ function calculateValues(tier, profession) {
 
   const craftedValue = (refinedValue * profession.amount) + craftAction;
 
-  return { base: gatherTime, refined: refinedValue, crafted: craftedValue };
+  return {
+    base: gatherTime,
+    refined: refinedValue,
+    crafted: craftedValue,
+    breakdown: {
+      base: null,
+      refined: `2\u00d7${formatTime(gatherTime)} ${profession.base} + ${formatTime(refineTime)} ${profession.refined}`,
+      crafted: `${profession.amount}\u00d7${formatTime(refinedValue)} ${profession.refined} + ${formatTime(craftAction)} ${profession.crafted}`
+    }
+  };
 }
 
 /* =====================================================
@@ -291,6 +309,10 @@ function buildProfessionTables() {
       const refinedWidth = values.refined ? (values.refined / GLOBAL_MAX_CRAFTED) * 100 : 0;
       const craftedWidth = (values.crafted / GLOBAL_MAX_CRAFTED) * 100;
 
+      const baseBreakdown = values.breakdown.base ? `<span class="breakdown">${values.breakdown.base}</span>` : "";
+      const refinedBreakdown = values.breakdown.refined ? `<span class="breakdown">${values.breakdown.refined}</span>` : "";
+      const craftedBreakdown = values.breakdown.crafted ? `<span class="breakdown">${values.breakdown.crafted}</span>` : "";
+
       tableHtml += `
         <tr>
           <td>
@@ -301,6 +323,7 @@ function buildProfessionTables() {
             <span class="value-wrap">
               <span class="time-bar" style="width:${baseWidth}%;background:${tierColor};"></span>
               <span class="value">${formatTime(values.base)}</span>
+              ${baseBreakdown}
             </span>
           </td>
           ${profession.refined ? `
@@ -309,6 +332,7 @@ function buildProfessionTables() {
               <span class="value-wrap">
                 <span class="time-bar" style="width:${refinedWidth}%;background:${tierColor};"></span>
                 <span class="value">${formatTime(values.refined)}</span>
+                ${refinedBreakdown}
               </span>
             </td>
           ` : ""}
@@ -317,6 +341,7 @@ function buildProfessionTables() {
             <span class="value-wrap">
               <span class="time-bar" style="width:${craftedWidth}%;background:${tierColor};"></span>
               <span class="value">${formatTime(values.crafted)}</span>
+              ${craftedBreakdown}
             </span>
           </td>
         </tr>
