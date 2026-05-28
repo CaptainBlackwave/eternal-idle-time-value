@@ -11,146 +11,193 @@
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-left">
-      <h1>Resource Time Value Calculator</h1>
-      <p>Calculates intrinsic value based on total gathering, refining, and crafting time.</p>
+  <!-- =============================================
+       HERO BAND — Dark Navy
+       ============================================= -->
+  <section class="hero-band-dark">
+
+    <!-- Theme Toggle (top-right) -->
+    <div class="hero-toggle-wrap">
+      <button id="themeToggle" class="theme-toggle" aria-label="Toggle light/dark theme" type="button">
+        <span class="icon" aria-hidden="true">🌙</span>
+        <span id="themeLabel">Dark</span>
+      </button>
     </div>
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle light/dark theme" type="button">
-      <span class="icon" aria-hidden="true">🌙</span>
-      <span id="themeLabel">Dark</span>
-    </button>
-  </header>
 
-  <!-- Trade Calculator Section -->
-  <div class="section">
-    <div class="card">
-      <h2>Trade Calculator</h2>
+    <!-- Decorative SVG Dots -->
+    <div class="hero-dot hero-dot-1" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="28" height="28" rx="4" fill="#7c3aed" opacity="0.6"/>
+        <rect x="2" y="2" width="28" height="28" rx="4" stroke="#7c3aed" stroke-width="1.5" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="hero-dot hero-dot-2" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="22" height="22" rx="3" fill="#2dd4bf" opacity="0.5"/>
+        <rect x="1" y="1" width="22" height="22" rx="3" stroke="#2dd4bf" stroke-width="1.5" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="hero-dot hero-dot-3" aria-hidden="true">
+      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1.5" y="1.5" width="25" height="25" rx="5" fill="#fb923c" opacity="0.5"/>
+        <rect x="1.5" y="1.5" width="25" height="25" rx="5" stroke="#fb923c" stroke-width="1.5" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="hero-dot hero-dot-4" aria-hidden="true">
+      <svg viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="24" height="24" rx="4" fill="#e879f9" opacity="0.55"/>
+        <rect x="1" y="1" width="24" height="24" rx="4" stroke="#e879f9" stroke-width="1.5" opacity="0.35"/>
+      </svg>
+    </div>
+    <div class="hero-dot hero-dot-5" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.5" y="0.5" width="19" height="19" rx="3" fill="#fde68a" opacity="0.6"/>
+        <rect x="0.5" y="0.5" width="19" height="19" rx="3" stroke="#fde68a" stroke-width="1.5" opacity="0.4"/>
+      </svg>
+    </div>
 
-      <div class="trade-grid">
+    <!-- Hero Content -->
+    <div class="hero-content">
+      <h1>Resource Time Value Calculator</h1>
+      <p class="hero-subtitle">Calculates intrinsic value based on total gathering, refining, and crafting time.</p>
+    </div>
+  </section>
 
-        <!-- GIVE -->
-        <div class="trade-side">
-          <h3>You Have</h3>
+  <!-- =============================================
+       PAGE CONTENT
+       ============================================= -->
+  <div class="page-content">
 
-          <label for="giveTier">Tier</label>
-          <select id="giveTier" aria-label="Select tier of resource you have"></select>
+    <!-- Trade Calculator Section -->
+    <div class="section">
+      <div class="trade-card">
+        <h2>Trade Calculator</h2>
 
-          <label for="giveType">Resource</label>
-          <select id="giveType" aria-label="Select resource type you have"></select>
+        <div class="trade-grid">
 
-          <label for="giveAmount">Amount</label>
-          <input
-            id="giveAmount"
-            type="number"
-            value="1"
-            min="1"
-            aria-label="Amount of resources you have"
-          >
+          <!-- GIVE -->
+          <div class="trade-side">
+            <h3>You Have</h3>
 
-          <div id="giveRarityContainer" class="trade-rarity-container" style="display:none;">
-            <label for="giveRarity">Rarity</label>
-            <select id="giveRarity" aria-label="Select rarity of crafted item you have"></select>
+            <label for="giveTier">Tier</label>
+            <select id="giveTier" aria-label="Select tier of resource you have"></select>
+
+            <label for="giveType">Resource</label>
+            <select id="giveType" aria-label="Select resource type you have"></select>
+
+            <label for="giveAmount">Amount</label>
+            <input
+              id="giveAmount"
+              type="number"
+              value="1"
+              min="1"
+              aria-label="Amount of resources you have"
+            >
+
+            <div id="giveRarityContainer" class="trade-rarity-container" style="display:none;">
+              <label for="giveRarity">Rarity</label>
+              <select id="giveRarity" aria-label="Select rarity of crafted item you have"></select>
+            </div>
+          </div>
+
+          <!-- SWAP -->
+          <div>
+            <button
+              id="swapSides"
+              class="swap-btn"
+              type="button"
+              aria-label="Swap have and get sides"
+              title="Swap sides"
+            >
+              ⇄
+            </button>
+          </div>
+
+          <!-- WANT -->
+          <div class="trade-side">
+            <h3>You Get</h3>
+
+            <label for="wantTier">Tier</label>
+            <select id="wantTier" aria-label="Select tier of resource you get"></select>
+
+            <label for="wantType">Resource</label>
+            <select id="wantType" aria-label="Select resource type you get"></select>
           </div>
         </div>
 
-        <!-- SWAP -->
-        <div>
-          <button
-            id="swapSides"
-            class="swap-btn"
-            type="button"
-            aria-label="Swap have and get sides"
-            title="Swap sides"
-          >
-            ⇄
+        <button
+          id="calculateTrade"
+          class="calculate-btn"
+          type="button"
+          aria-label="Calculate equivalent trade value"
+        >
+          Calculate Equivalent Trade
+        </button>
+
+        <!-- Trade Result -->
+        <div id="tradeResult" role="region" aria-live="polite" aria-label="Trade calculation result">
+          <h2>Equivalent Trade Value</h2>
+          <p class="result-line" id="resultDescription"></p>
+          <p class="result-value" id="resultValue"></p>
+
+          <div class="result-breakdown" id="resultBreakdown" style="display:none;">
+            <div class="breakdown-bar" id="breakdownBar"></div>
+            <div class="breakdown-labels" id="breakdownLabels"></div>
+          </div>
+
+          <div id="rarityEquivalents" class="rarity-equivalents" style="display:none;">
+            <h2>Rarity Equivalents</h2>
+            <div id="rarityEquivalentsList"></div>
+          </div>
+
+          <button id="copyResult" class="copy-btn" type="button" aria-label="Copy trade result to clipboard">
+            📋 Copy Result
           </button>
         </div>
-
-        <!-- WANT -->
-        <div class="trade-side">
-          <h3>You Get</h3>
-
-          <label for="wantTier">Tier</label>
-          <select id="wantTier" aria-label="Select tier of resource you get"></select>
-
-          <label for="wantType">Resource</label>
-          <select id="wantType" aria-label="Select resource type you get"></select>
-        </div>
-      </div>
-
-      <button
-        id="calculateTrade"
-        class="calculate-btn"
-        type="button"
-        aria-label="Calculate equivalent trade value"
-      >
-        Calculate Equivalent Trade
-      </button>
-
-      <!-- Trade Result -->
-      <div id="tradeResult" role="region" aria-live="polite" aria-label="Trade calculation result">
-        <h2>Equivalent Trade Value</h2>
-        <p class="result-line" id="resultDescription"></p>
-        <p class="result-value" id="resultValue"></p>
-
-        <div class="result-breakdown" id="resultBreakdown" style="display:none;">
-          <div class="breakdown-bar" id="breakdownBar"></div>
-          <div class="breakdown-labels" id="breakdownLabels"></div>
-        </div>
-
-        <div id="rarityEquivalents" class="rarity-equivalents" style="display:none;">
-          <h2>Rarity Equivalents</h2>
-          <div id="rarityEquivalentsList"></div>
-        </div>
-
-        <button id="copyResult" class="copy-btn" type="button" aria-label="Copy trade result to clipboard">
-          📋 Copy Result
-        </button>
       </div>
     </div>
-  </div>
 
-  <!-- Search / Filter & Rarity -->
-  <div class="section">
-    <div class="search-rarity-row">
-      <div class="search-bar">
-        <span class="search-icon" aria-hidden="true">🔍</span>
-        <input
-          id="professionSearch"
-          type="text"
-          placeholder="Search professions..."
-          aria-label="Search professions by name or resource"
-        />
-      </div>
-      <div class="rarity-selector">
-        <label for="rarityFilter">Rarity:</label>
-        <select id="rarityFilter" aria-label="Filter crafted rarity multiplier">
-          <option value="white">Common (White) — 1×</option>
-          <option value="green">Uncommon (Green)</option>
-          <option value="blue">Rare (Blue)</option>
-          <option value="purple">Epic (Purple)</option>
-          <option value="orange">Legendary (Orange)</option>
-        </select>
-        <span class="rarity-hint">Applies to crafted gear only</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Profession Grid -->
-  <div class="grid" id="professionGrid"></div>
-
-  <!-- Info Section -->
-  <div class="section">
-    <div class="info-grid">
-      <div class="info-box">
-        <p><strong>Base Resources:</strong> Gathering time for one raw material.</p>
-        <p><strong>Refined Resources:</strong> Includes gathering 2 base materials plus refining time.</p>
-        <p><strong>Crafted Items:</strong> Includes all required materials plus crafting time.</p>
-        <p><strong>Trade Value:</strong> Higher total production time means higher intrinsic value.</p>
+    <!-- Search / Filter & Rarity -->
+    <div class="section">
+      <div class="search-rarity-row">
+        <div class="search-bar">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input
+            id="professionSearch"
+            type="text"
+            placeholder="Search professions..."
+            aria-label="Search professions by name or resource"
+          />
+        </div>
+        <div class="rarity-selector">
+          <label for="rarityFilter">Rarity:</label>
+          <select id="rarityFilter" aria-label="Filter crafted rarity multiplier">
+            <option value="white">Common (White) — 1×</option>
+            <option value="green">Uncommon (Green)</option>
+            <option value="blue">Rare (Blue)</option>
+            <option value="purple">Epic (Purple)</option>
+            <option value="orange">Legendary (Orange)</option>
+          </select>
+          <span class="rarity-hint">Applies to crafted gear only</span>
+        </div>
       </div>
     </div>
+
+    <!-- Profession Grid -->
+    <div class="grid" id="professionGrid"></div>
+
+    <!-- Info Section -->
+    <div class="section">
+      <div class="info-grid">
+        <div class="info-box">
+          <p><strong>Base Resources:</strong> Gathering time for one raw material.</p>
+          <p><strong>Refined Resources:</strong> Includes gathering 2 base materials plus refining time.</p>
+          <p><strong>Crafted Items:</strong> Includes all required materials plus crafting time.</p>
+          <p><strong>Trade Value:</strong> Higher total production time means higher intrinsic value.</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script src="js/script.js"></script>

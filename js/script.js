@@ -51,7 +51,8 @@ const professions = [
     refined: "Planks",
     crafted: "Tools",
     amount: 20,
-    type: "main"
+    type: "main",
+    tint: "peach"
   },
   {
     name: "Warrior's Forge",
@@ -60,7 +61,8 @@ const professions = [
     refined: "Bars",
     crafted: "Warrior Gear",
     amount: 20,
-    type: "main"
+    type: "main",
+    tint: "rose"
   },
   {
     name: "Hunter's Lodge",
@@ -69,7 +71,8 @@ const professions = [
     refined: "Leather",
     crafted: "Hunter Gear",
     amount: 20,
-    type: "main"
+    type: "main",
+    tint: "mint"
   },
   {
     name: "Mage's Tower",
@@ -78,7 +81,8 @@ const professions = [
     refined: "Cloth",
     crafted: "Mage Gear",
     amount: 20,
-    type: "main"
+    type: "main",
+    tint: "lavender"
   },
   {
     name: "Alchemy Lab",
@@ -87,7 +91,8 @@ const professions = [
     refined: "Extract",
     crafted: "Potion",
     amount: 5,
-    type: "alchemy"
+    type: "alchemy",
+    tint: "sky"
   },
   {
     name: "Kitchen",
@@ -96,7 +101,8 @@ const professions = [
     refined: null,
     crafted: "Food",
     amount: 2,
-    type: "kitchen"
+    type: "kitchen",
+    tint: "yellow"
   }
 ];
 
@@ -310,7 +316,7 @@ function buildProfessionTables() {
 
   professions.forEach((profession, profIndex) => {
     const card = document.createElement("div");
-    card.className = "card";
+    card.className = "card card-feature-" + profession.tint;
     card.dataset.profession = profession.name.toLowerCase();
     card.dataset.resources = [
       profession.base,
@@ -354,7 +360,7 @@ function buildProfessionTables() {
         const rarityMult = getRarityMultiplier(tier, currentRarity);
         if (rarityMult !== 1) {
           const adjustedTime = values.crafted * rarityMult;
-          rarityHtml = `<span class="rarity-value">${rarityLabels[currentRarity]}: ${formatTime(adjustedTime)} <span class="rarity-mult">(${rarityMult.toFixed(1)}×)</span></span>`;
+          rarityHtml = `<span class="rarity-value rarity-${currentRarity}">${rarityLabels[currentRarity]}: ${formatTime(adjustedTime)} <span class="rarity-mult">(${rarityMult.toFixed(1)}×)</span></span>`;
         }
       }
 
@@ -556,43 +562,48 @@ function handleCalculate() {
   let segments = [];
   if (giveType === "base") {
     segments = [{ label: "Gathering", pct: 100, cls: "bar-gather" }];
-  } else if (giveType === "refined") {
-    const gatherPct = (giveValues.base * 2 / giveValues.refined) * 100;
-    const refinePct = refiningTimes[giveTier] / giveValues.refined * 100;
-    segments = [
-      { label: "Gathering", pct: gatherPct, cls: "bar-gather" },
-      { label: "Refining", pct: refinePct, cls: "bar-refine" }
-    ];
-  } else {
-    // crafted
-    const refinedTotal = giveValues.refined * giveProfession.amount;
-    const gatherPerRefined = giveValues.base * 2;
-    const totalGather = gatherPerRefined * giveProfession.amount;
-    const totalRefine = refiningTimes[giveTier] * giveProfession.amount;
+} else if (giveType === "refined") {
+     const gatherPct = (giveValues.base * 2 / giveValues.refined) * 100;
+     const refinePct = refiningTimes[giveTier] / giveValues.refined * 100;
+     segments = [
+       { label: "Gathering", pct: gatherPct, cls: "bar-gather" },
+       { label: "Refining", pct: refinePct, cls: "bar-refine" }
+     ];
+   } else if (giveProfession.type === "kitchen") {
+     // Kitchen (Food) - has no refining step, only gathering
+     segments = [
+       { label: "Gathering", pct: 100, cls: "bar-gather" }
+     ];
+   } else {
+     // crafted (gear professions)
+     const refinedTotal = giveValues.refined * giveProfession.amount;
+     const gatherPerRefined = giveValues.base * 2;
+     const totalGather = gatherPerRefined * giveProfession.amount;
+     const totalRefine = refiningTimes[giveTier] * giveProfession.amount;
 
-    let craftTime;
-    if (giveProfession.type === "alchemy") {
-      craftTime = refiningTimes[giveTier] * 5;
-    } else {
-      craftTime = craftingTimes[giveTier];
-    }
+     let craftTime;
+     if (giveProfession.type === "alchemy") {
+       craftTime = refiningTimes[giveTier] * 5;
+     } else {
+       craftTime = craftingTimes[giveTier];
+     }
 
-    const totalCraftTime = craftTime;
-    const totalAll = totalGather + totalRefine + totalCraftTime;
+     const totalCraftTime = craftTime;
+     const totalAll = totalGather + totalRefine + totalCraftTime;
 
-    segments = [
-      { label: "Gathering", pct: (totalGather / totalAll) * 100, cls: "bar-gather" },
-      { label: "Refining", pct: (totalRefine / totalAll) * 100, cls: "bar-refine" },
-      { label: "Crafting", pct: (totalCraftTime / totalAll) * 100, cls: "bar-craft" }
-    ];
-  }
+     segments = [
+       { label: "Gathering", pct: (totalGather / totalAll) * 100, cls: "bar-gather" },
+       { label: "Refining", pct: (totalRefine / totalAll) * 100, cls: "bar-refine" },
+       { label: "Crafting", pct: (totalCraftTime / totalAll) * 100, cls: "bar-craft" }
+     ];
+   }
 
   bar.innerHTML = segments.map(s =>
     `<span class="bar-segment ${s.cls}" style="width:${s.pct}%;"></span>`
   ).join("");
 
   labels.innerHTML = segments.map(s =>
-    `<span><span class="dot" style="background:var(--${s.cls === 'bar-gather' ? 'success' : s.cls === 'bar-refine' ? 'warning' : 'danger'});"></span> ${s.label} ${s.pct.toFixed(0)}%</span>`
+    `<span><span class="dot" style="background:var(--${s.cls === 'bar-gather' ? 'brand-teal' : s.cls === 'bar-refine' ? 'semantic-warning' : 'semantic-error'});"></span> ${s.label} ${s.pct.toFixed(0)}%</span>`
   ).join("");
 
   breakdownDiv.style.display = "block";
