@@ -569,12 +569,16 @@ function handleCalculate() {
        { label: "Gathering", pct: gatherPct, cls: "bar-gather" },
        { label: "Refining", pct: refinePct, cls: "bar-refine" }
      ];
-   } else if (giveProfession.type === "kitchen") {
-     // Kitchen (Food) - has no refining step, only gathering
-     segments = [
-       { label: "Gathering", pct: 100, cls: "bar-gather" }
-     ];
-   } else {
+} else if (giveProfession.type === "kitchen") {
+      // Kitchen (Food) - has no refining step, only gathering + crafting
+      const gatherPerFood = giveValues.base * 2;
+      const craftTime = refiningTimes[giveTier];
+      const totalAll = gatherPerFood + craftTime;
+      segments = [
+        { label: "Gathering", pct: (gatherPerFood / totalAll) * 100, cls: "bar-gather" },
+        { label: "Crafting", pct: (craftTime / totalAll) * 100, cls: "bar-craft" }
+      ];
+    } else {
      // crafted (gear professions)
      const refinedTotal = giveValues.refined * giveProfession.amount;
      const gatherPerRefined = giveValues.base * 2;
