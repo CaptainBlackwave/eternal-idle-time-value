@@ -71,7 +71,7 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
-  padding: 24px;
+  padding: 12px;
   min-height: 100vh;
   transition: background 0.3s ease, color 0.3s ease;
   line-height: 1.6;
@@ -495,10 +495,19 @@ input[type="number"]::-webkit-outer-spin-button {
   color: var(--accent);
 }
 
+/* ===== Search / Filter & Rarity Row ===== */
+.search-rarity-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 /* ===== Search / Filter Bar ===== */
 .search-bar {
   position: relative;
-  margin-bottom: 20px;
+  flex: 1;
+  min-width: 200px;
   max-width: 400px;
 }
 
@@ -537,6 +546,194 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: 18px;
   pointer-events: none;
   line-height: 1;
+}
+
+/* ===== Rarity Selector ===== */
+.rarity-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.rarity-selector label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.rarity-selector select {
+  padding: 9px 36px 9px 12px;
+  background: var(--search-bg);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 170px;
+}
+
+.rarity-selector select:hover {
+  border-color: var(--accent);
+}
+
+.rarity-selector select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.rarity-selector .rarity-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* Rarity-adjusted value in the crafted column */
+.rarity-value {
+  display: block;
+  font-size: 11px;
+  color: var(--warning);
+  font-weight: 500;
+  margin-top: 1px;
+  position: relative;
+  z-index: 1;
+}
+.rarity-value .rarity-mult {
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+/* ===== Trade Calculator Rarity Selector ===== */
+.trade-rarity-container {
+  margin-top: 4px;
+}
+
+.trade-rarity-container label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  margin-top: 0;
+}
+
+.trade-rarity-container select {
+  width: 100%;
+  padding: 9px 36px 9px 12px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-light);
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.trade-rarity-container select:hover {
+  border-color: var(--accent);
+}
+
+.trade-rarity-container select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+/* ===== Rarity Equivalents in Trade Result ===== */
+.rarity-equivalents {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.rarity-equivalents h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.rarity-equivalents .eq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rarity-equivalents .eq-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: background 0.15s ease;
+}
+
+.rarity-equivalents .eq-row:hover {
+  background: var(--accent-soft);
+}
+
+.rarity-equivalents .eq-row .eq-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.rarity-equivalents .eq-row .eq-value {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.rarity-equivalents .eq-row .eq-mult {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.rarity-equivalents .eq-row.eq-white .eq-label {
+  color: var(--text-muted);
+}
+.rarity-equivalents .eq-row.eq-white .eq-value {
+  color: var(--text-muted);
+}
+.rarity-equivalents .eq-row.eq-green .eq-label {
+  color: #34d399;
+}
+.rarity-equivalents .eq-row.eq-green .eq-value {
+  color: #34d399;
+}
+.rarity-equivalents .eq-row.eq-blue .eq-label {
+  color: #60a5fa;
+}
+.rarity-equivalents .eq-row.eq-blue .eq-value {
+  color: #60a5fa;
+}
+.rarity-equivalents .eq-row.eq-purple .eq-label {
+  color: #c084fc;
+}
+.rarity-equivalents .eq-row.eq-purple .eq-value {
+  color: #c084fc;
+}
+.rarity-equivalents .eq-row.eq-orange .eq-label {
+  color: #fb923c;
+}
+.rarity-equivalents .eq-row.eq-orange .eq-value {
+  color: #fb923c;
 }
 
 /* ===== Profession Grid ===== */

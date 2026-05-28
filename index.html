@@ -48,6 +48,11 @@
             min="1"
             aria-label="Amount of resources you have"
           >
+
+          <div id="giveRarityContainer" class="trade-rarity-container" style="display:none;">
+            <label for="giveRarity">Rarity</label>
+            <select id="giveRarity" aria-label="Select rarity of crafted item you have"></select>
+          </div>
         </div>
 
         <!-- SWAP -->
@@ -95,6 +100,11 @@
           <div class="breakdown-labels" id="breakdownLabels"></div>
         </div>
 
+        <div id="rarityEquivalents" class="rarity-equivalents" style="display:none;">
+          <h2>Rarity Equivalents</h2>
+          <div id="rarityEquivalentsList"></div>
+        </div>
+
         <button id="copyResult" class="copy-btn" type="button" aria-label="Copy trade result to clipboard">
           📋 Copy Result
         </button>
@@ -102,16 +112,29 @@
     </div>
   </div>
 
-  <!-- Search / Filter -->
+  <!-- Search / Filter & Rarity -->
   <div class="section">
-    <div class="search-bar">
-      <span class="search-icon" aria-hidden="true">🔍</span>
-      <input
-        id="professionSearch"
-        type="text"
-        placeholder="Search professions..."
-        aria-label="Search professions by name or resource"
-      />
+    <div class="search-rarity-row">
+      <div class="search-bar">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input
+          id="professionSearch"
+          type="text"
+          placeholder="Search professions..."
+          aria-label="Search professions by name or resource"
+        />
+      </div>
+      <div class="rarity-selector">
+        <label for="rarityFilter">Rarity:</label>
+        <select id="rarityFilter" aria-label="Filter crafted rarity multiplier">
+          <option value="white">Common (White) — 1×</option>
+          <option value="green">Uncommon (Green)</option>
+          <option value="blue">Rare (Blue)</option>
+          <option value="purple">Epic (Purple)</option>
+          <option value="orange">Legendary (Orange)</option>
+        </select>
+        <span class="rarity-hint">Applies to crafted gear only</span>
+      </div>
     </div>
   </div>
 

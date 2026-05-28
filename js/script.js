@@ -14,6 +14,35 @@ const craftingTimes = {
   6: 1200, 7: 1400, 8: 1600, 9: 1800, 10: 2000
 };
 
+/* Rarity chances per tier (percent) — applies to crafted gear only (not food/potions) */
+const rarityChances = {
+  1:  { white: 72.2,   green: 15,    blue: 7.2,   purple: 4.9,   orange: 0.7 },
+  2:  { white: 73.9,   green: 14.445, blue: 6.65,  purple: 4.38,  orange: 0.625 },
+  3:  { white: 75.6,   green: 13.89,  blue: 6.1,   purple: 3.86,  orange: 0.55 },
+  4:  { white: 77.3,   green: 13.335, blue: 5.55,  purple: 3.34,  orange: 0.475 },
+  5:  { white: 79,     green: 12.78,  blue: 5,     purple: 2.82,  orange: 0.4 },
+  6:  { white: 80.7,   green: 12.22,  blue: 4.45,  purple: 2.305, orange: 0.325 },
+  7:  { white: 82.4,   green: 11.665, blue: 3.9,   purple: 1.785, orange: 0.25 },
+  8:  { white: 84.1,   green: 11.11,  blue: 3.35,  purple: 1.265, orange: 0.175 },
+  9:  { white: 85.8,   green: 10.555, blue: 2.8,   purple: 0.745, orange: 0.1 },
+  10: { white: 87.5,   green: 10,     blue: 2.25,  purple: 0.225, orange: 0.025 }
+};
+
+const rarityNames = ["white", "green", "blue", "purple", "orange"];
+const rarityLabels = { white: "Common", green: "Uncommon", blue: "Rare", purple: "Epic", orange: "Legendary" };
+
+/**
+ * Returns the multiplier for a given tier and rarity.
+ * Multiplier = 100 / chance%
+ * White always returns 1 (baseline).
+ */
+function getRarityMultiplier(tier, rarity) {
+  if (rarity === "white") return 1;
+  const chances = rarityChances[tier];
+  if (!chances || !chances[rarity]) return 1;
+  return 100 / chances[rarity];
+}
+
 const professions = [
   {
     name: "Toolmaker",
@@ -154,6 +183,12 @@ function getGlobalMaxCrafted() {
   return max;
 }
 const GLOBAL_MAX_CRAFTED = getGlobalMaxCrafted();
+
+let currentRarity = "white";
+
+function getCurrentRarity() {
+  return currentRarity;
+}
 
 /* =====================================================
    CALCULATIONS
@@ -313,6 +348,16 @@ function buildProfessionTables() {
       const refinedBreakdown = values.breakdown.refined ? `<span class="breakdown">${values.breakdown.refined}</span>` : "";
       const craftedBreakdown = values.breakdown.crafted ? `<span class="breakdown">${values.breakdown.crafted}</span>` : "";
 
+      // Rarity-adjusted crafted value (only for main gear professions, not food/potions)
+      let rarityHtml = "";
+      if (profession.type === "main") {
+        const rarityMult = getRarityMultiplier(tier, currentRarity);
+        if (rarityMult !== 1) {
+          const adjustedTime = values.crafted * rarityMult;
+          rarityHtml = `<span class="rarity-value">${rarityLabels[currentRarity]}: ${formatTime(adjustedTime)} <span class="rarity-mult">(${rarityMult.toFixed(1)}×)</span></span>`;
+        }
+      }
+
       tableHtml += `
         <tr>
           <td>
@@ -342,6 +387,7 @@ function buildProfessionTables() {
               <span class="time-bar" style="width:${craftedWidth}%;background:${tierColor};"></span>
               <span class="value">${formatTime(values.crafted)}</span>
               ${craftedBreakdown}
+              ${rarityHtml}
             </span>
           </td>
         </tr>
@@ -385,16 +431,53 @@ function initSearch() {
    TRADE CALCULATOR
    ===================================================== */
 
+/** Returns true if the profession type is gear-crafting (main) */
+function isGearProfession(type) {
+  return type === "main";
+}
+
+/** Populate the trade calculator's rarity dropdown */
+function populateTradeRaritySelect(selectId) {
+  const select = document.getElementById(selectId);
+  select.innerHTML = "";
+  rarityNames.forEach((r) => {
+    const opt = document.createElement("option");
+    opt.value = r;
+    opt.textContent = `${rarityLabels[r]} (${r.charAt(0).toUpperCase() + r.slice(1)})`;
+    select.appendChild(opt);
+  });
+}
+
+/** Show or hide the give rarity dropdown based on whether crafted gear is selected */
+function updateGiveRarityVisibility() {
+  const container = document.getElementById("giveRarityContainer");
+  try {
+    const selection = JSON.parse(document.getElementById("giveType").value);
+    const profession = professions[selection.profession];
+    const isCraftedGear = selection.type === "crafted" && isGearProfession(profession.type);
+    container.style.display = isCraftedGear ? "block" : "none";
+  } catch {
+    container.style.display = "none";
+  }
+}
+
 function handleSwap() {
   const giveTier = document.getElementById("giveTier").value;
   const wantTier = document.getElementById("wantTier").value;
   const giveType = document.getElementById("giveType").value;
   const wantType = document.getElementById("wantType").value;
+  const giveRarity = document.getElementById("giveRarity").value;
 
   document.getElementById("giveTier").value = wantTier;
   document.getElementById("wantTier").value = giveTier;
   document.getElementById("giveType").value = wantType;
   document.getElementById("wantType").value = giveType;
+
+  // Swap rarity: keep it as is on the give side (resets to white)
+  document.getElementById("giveRarity").value = "white";
+
+  // Update rarity visibility after swap
+  updateGiveRarityVisibility();
 
   // Swap animation
   const btn = document.getElementById("swapSides");
@@ -422,7 +505,12 @@ function handleCalculate() {
   const giveValues = calculateValues(giveTier, giveProfession);
   const wantValues = calculateValues(wantTier, wantProfession);
 
-  const giveTimeValue = giveValues[giveType];
+  // Apply give-side rarity multiplier if crafted gear
+  const giveIsGear = giveType === "crafted" && isGearProfession(giveProfession.type);
+  const giveRarity = giveIsGear ? document.getElementById("giveRarity").value : "white";
+  const giveRarityMult = getRarityMultiplier(giveTier, giveRarity);
+  const giveTimeValue = giveValues[giveType] * giveRarityMult;
+
   const wantTimeValue = wantValues[wantType];
 
   const totalTime = giveTimeValue * giveAmount;
@@ -442,10 +530,15 @@ function handleCalculate() {
       ? wantProfession.refined
       : wantProfession.crafted;
 
+  // Build give-side rarity label
+  const giveRarityLabel = giveIsGear && giveRarity !== "white"
+    ? ` ${rarityLabels[giveRarity]}`
+    : "";
+
   // Build description
   document.getElementById("resultDescription").innerHTML = `
     <strong>${giveAmount.toLocaleString()}</strong>
-    T${giveTier} ${giveName}
+    T${giveTier} ${giveName}${giveRarityLabel}
     contains approximately
     <strong>${formatTime(totalTime)}</strong>
     of total production time.
@@ -504,6 +597,32 @@ function handleCalculate() {
 
   breakdownDiv.style.display = "block";
 
+  // --- Rarity Equivalents (for the "You Get" side) ---
+  const wantIsGear = wantType === "crafted" && isGearProfession(wantProfession.type);
+  const eqContainer = document.getElementById("rarityEquivalents");
+  const eqList = document.getElementById("rarityEquivalentsList");
+
+  if (wantIsGear) {
+    const wantNamesToShow = rarityNames.filter(r => r !== "white"); // skip white (it's the main result)
+    let eqHtml = '<div class="eq-list">';
+    wantNamesToShow.forEach((rarity) => {
+      const mult = getRarityMultiplier(wantTier, rarity);
+      const eqAmount = equivalentAmount / mult;
+      const label = `${rarityLabels[rarity]}`;
+      eqHtml += `
+        <div class="eq-row eq-${rarity}">
+          <span class="eq-label">${label}</span>
+          <span class="eq-value">≈ ${eqAmount.toLocaleString(undefined, { maximumFractionDigits: 4 })} T${wantTier} ${wantName} <span class="eq-mult">(${mult.toFixed(1)}×)</span></span>
+        </div>
+      `;
+    });
+    eqHtml += '</div>';
+    eqList.innerHTML = eqHtml;
+    eqContainer.style.display = "block";
+  } else {
+    eqContainer.style.display = "none";
+  }
+
   // Show result with animation
   result.classList.remove("visible");
   // Force reflow
@@ -517,7 +636,21 @@ function handleCalculate() {
 function handleCopyResult() {
   const description = document.getElementById("resultDescription").textContent || "";
   const value = document.getElementById("resultValue").textContent || "";
-  const text = `${description}\n${value}`.trim();
+  let text = `${description}\n${value}`.trim();
+
+  // Append rarity equivalents if visible
+  const eqContainer = document.getElementById("rarityEquivalents");
+  if (eqContainer.style.display !== "none") {
+    const rows = eqContainer.querySelectorAll(".eq-row");
+    if (rows.length) {
+      text += "\n--- Rarity Equivalents ---";
+      rows.forEach(row => {
+        const label = row.querySelector(".eq-label")?.textContent || "";
+        const val = row.querySelector(".eq-value")?.textContent || "";
+        text += `\n${label}: ${val}`;
+      });
+    }
+  }
 
   if (!text) return;
 
@@ -548,6 +681,20 @@ function handleCopyResult() {
 }
 
 /* =====================================================
+   RARITY FILTER
+   ===================================================== */
+
+function initRarityFilter() {
+  const raritySelect = document.getElementById("rarityFilter");
+  if (!raritySelect) return;
+
+  raritySelect.addEventListener("change", () => {
+    currentRarity = raritySelect.value;
+    buildProfessionTables();
+  });
+}
+
+/* =====================================================
    INITIALIZATION
    ===================================================== */
 
@@ -562,16 +709,25 @@ function init() {
   populateResourceSelect("giveType");
   populateResourceSelect("wantType");
 
+  // Populate trade calculator rarity dropdown
+  populateTradeRaritySelect("giveRarity");
+
   // Build profession tables
   buildProfessionTables();
 
   // Search
   initSearch();
 
+  // Rarity filter
+  initRarityFilter();
+
   // Event listeners
   document.getElementById("swapSides").addEventListener("click", handleSwap);
   document.getElementById("calculateTrade").addEventListener("click", handleCalculate);
   document.getElementById("copyResult").addEventListener("click", handleCopyResult);
+
+  // Show/hide rarity dropdown when resource type changes
+  document.getElementById("giveType").addEventListener("change", updateGiveRarityVisibility);
 
   // Handle Enter key on amount input
   document.getElementById("giveAmount").addEventListener("keydown", (e) => {
